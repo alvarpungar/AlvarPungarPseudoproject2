@@ -3,13 +3,17 @@
     <link rel="stylesheet" type="text/css"
           href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css">
     <script type="text/javascript" charset="utf8"
-            src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.2.min.js"></script>
+            src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
     <script type="text/javascript" charset="utf8"
-            src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
-
+            src="https://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+    <style>
+        tfoot {
+            display: table-header-group;
+        }
+    </style>
 </head>
 <body>
-<table id="example">
+<table id="tabel" border="2px">
     <thead>
     <tr>
         <th>country</th>
@@ -19,6 +23,15 @@
         <th>area</th>
     </tr>
     </thead>
+    <tfoot>
+    <tr>
+        <th>country</th>
+        <th>official languages</th>
+        <th>population</th>
+        <th>currency</th>
+        <th>area</th>
+    </tr>
+    </tfoot>
     <tbody>
     <tr>
         <td>Estonia</td>
@@ -30,7 +43,7 @@
     <tr>
         <td>Latvia</td>
         <td>Latvian</td>
-        <td>1,997,500 </td>
+        <td>1,997,500</td>
         <td>Euro (€) (EUR)</td>
         <td>64,589 km2</td>
     </tr>
@@ -57,10 +70,28 @@
     </tr>
     </tbody>
 </table>
+
 <script>
-    $(function () {
-        $("#example").dataTable();
-    })
+    $(document).ready(function () {
+        $('tfoot th').each(function () {
+            var title = $('thead th').eq($(this).index()).text();
+            $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+        });
+
+        var table = $('table').DataTable();
+
+        table.columns().every(function () {
+            var that = this;
+
+            $('input', this.footer()).on('keyup change', function () {
+                if (that.search() !== this.value) {
+                    that
+                        .search(this.value)
+                        .draw();
+                }
+            });
+        });
+    });
 </script>
 </body>
 </html>
